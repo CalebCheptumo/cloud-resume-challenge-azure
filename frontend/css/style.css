@@ -416,3 +416,189 @@ footer > div > div:last-child > p {
   width: 100%;
   object-fit: cover;
 }
+
+/* About Section Styles */
+#about {
+  background-color: #ffffff;
+  padding: 4rem 0;
+}
+
+@media (min-width: 768px) {
+  #about {
+    padding: 6rem 0;
+  }
+}
+
+#about > div {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+#about h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  #about h2 {
+    font-size: 2.25rem;
+  }
+}
+
+#about > div > div:last-child {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  #about > div > div:last-child {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Left Column - About Content */
+#about > div > div:last-child > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#about > div > div:last-child > div:first-child > p {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #4b5563;
+}
+
+/* Currently Learning Box */
+#about > div > div:last-child > div:first-child > div:last-child {
+  padding: 1.25rem;
+  background-color: #eff6ff;
+  border-radius: 0.5rem;
+  border: 1px solid #bfdbfe;
+}
+
+#about > div > div:last-child > div:first-child > div:last-child > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+#about > div > div:last-child > div:first-child > div:last-child h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+#about
+  > div
+  > div:last-child
+  > div:first-child
+  > div:last-child
+  > p:first-of-type {
+  color: #1e40af;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+#about
+  > div
+  > div:last-child
+  > div:first-child
+  > div:last-child
+  > p:last-of-type {
+  font-size: 0.875rem;
+  color: #1d4ed8;
+}
+
+/* Right Column - Certifications & Badges */
+#about > div > div:last-child > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#about > div > div:last-child > div:last-child > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#about > div > div:last-child > div:last-child > div:first-child > h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+/* Badges Grid */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.badges-grid > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badges-grid > div > a {
+  transition: transform 0.2s ease;
+}
+
+.badges-grid > div > a:hover {
+  transform: scale(1.05);
+}
+
+.badges-grid > div > a > img {
+  width: 6rem;
+  height: 6rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  display: block;
+}
+
+.badges-grid > div > p {
+  font-size: 0.75rem;
+  text-align: center;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1;
+}
+
+/* Credly Profile Link */
+.credly-profile-link {
+  padding: 0.75rem;
+  background-color: #eff6ff;
+  border-radius: 0.5rem;
+  border: 1px solid #bfdbfe;
+}
+
+.credly-profile-link > a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1d4ed8;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.credly-profile-link > a:hover {
+  color: #1e40af;
+}
+
+.credly-profile-link > a > span:first-child {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.credly-profile-link > a > span:last-child {
+  font-size: 0.75rem;
+}
