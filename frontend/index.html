@@ -582,9 +582,13 @@
     </section>
 
     <!-- Projects Section -->
-    <section id="projects" aria-labelledby="projects-title">
-      <div>
-        <div>
+    <section
+      id="projects"
+      class="projects-section"
+      aria-labelledby="projects-title"
+    >
+      <div class="projects-container">
+        <div class="projects-header">
           <h2 id="projects-title">Featured Projects</h2>
           <p>
             Showcasing my cloud engineering and web development capabilities
@@ -592,13 +596,13 @@
           </p>
         </div>
 
-        <div>
+        <div class="projects-list">
           <!-- Cloud Resume Challenge Project -->
-          <div>
-            <div>
+          <div class="project-card">
+            <div class="project-content">
               <!-- Project Image -->
-              <div>
-                <div>
+              <div class="project-image">
+                <div class="image-container">
                   <img
                     src="assets/portfolio.png"
                     alt="Cloud Resume Challenge project screenshot"
@@ -609,8 +613,8 @@
               </div>
 
               <!-- Project Details -->
-              <div>
-                <div>
+              <div class="project-details">
+                <div class="project-info">
                   <h3>Cloud Resume Challenge</h3>
                   <p>
                     A professional portfolio website built for the Azure Cloud
@@ -620,7 +624,7 @@
                 </div>
 
                 <!-- Tech Stack -->
-                <div>
+                <div class="tech-stack">
                   <h4>
                     <svg
                       width="20"
@@ -635,7 +639,7 @@
                     </svg>
                     Tech Stack
                   </h4>
-                  <div>
+                  <div class="tech-tags">
                     <span>HTML5</span>
                     <span>CSS3</span>
                     <span>JavaScript</span>
@@ -646,11 +650,12 @@
                 </div>
 
                 <!-- Project Links -->
-                <div>
+                <div class="project-links">
                   <a
                     href="https://github.com/CalebCheptumo/cloud-resume-challenge-azure"
                     target="_blank"
                     rel="noopener noreferrer"
+                    class="btn btn-github"
                   >
                     <svg
                       width="20"
@@ -670,6 +675,7 @@
                     href="https://calebcheptumo.cloud"
                     target="_blank"
                     rel="noopener noreferrer"
+                    class="btn btn-demo"
                   >
                     <svg
                       width="20"
@@ -694,8 +700,8 @@
         </div>
 
         <!-- Call to Action -->
-        <div>
-          <div>
+        <div class="projects-cta">
+          <div class="cta-container">
             <svg
               width="20"
               height="20"
