@@ -1,0 +1,152 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  color: #171717;
+  background-color: #ffffff;
+}
+
+/* Header Styles */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+header > div {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+header > div > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo/Name - Left */
+header > div > div > div:first-child {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+header > div > div > div:first-child:hover {
+  color: #2563eb;
+}
+
+/* Navigation - Center */
+header nav {
+  display: none;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  header nav {
+    display: flex;
+  }
+}
+
+header nav button {
+  color: #000000;
+  transition: color 0.2s ease;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.375rem;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+header nav button:hover {
+  color: #2563eb;
+}
+
+header nav button span {
+  position: absolute;
+  bottom: -0.25rem;
+  left: 0;
+  width: 0;
+  height: 0.125rem;
+  background-color: #2563eb;
+  transition: width 0.2s ease;
+}
+
+header nav button:hover span {
+  width: 100%;
+}
+
+/* CTA Button - Right */
+header a[href*="drive.google.com"] {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  header a[href*="drive.google.com"] {
+    display: flex;
+  }
+}
+
+header a[href*="drive.google.com"]:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+header a[href*="drive.google.com"] svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Mobile Menu Button */
+header button#mobileMenuBtn {
+  display: block;
+  padding: 0.5rem;
+  color: #374151;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  header button#mobileMenuBtn {
+    display: none;
+  }
+}
+
+header button#mobileMenuBtn:hover {
+  color: #2563eb;
+}
+
+header button#mobileMenuBtn svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
