@@ -1024,3 +1024,145 @@ footer > div > div:last-child > p {
   color: #1e40af;
   font-weight: 500;
 }
+
+/* Contact Section Styles */
+.contact-section {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 3rem 0;
+}
+
+@media (min-width: 768px) {
+  .contact-section {
+    padding: 4rem 0;
+  }
+}
+
+.contact-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.contact-header h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .contact-header h2 {
+    font-size: 2.25rem;
+  }
+}
+
+.contact-header p {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #d1d5db;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+/* Contact Form Container */
+.contact-form-wrapper {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.contact-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-form-container h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+/* Contact Form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form Fields */
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field > label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #d1d5db;
+  margin-bottom: 0.5rem;
+}
+
+.form-field > input,
+.form-field > textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #1f2937;
+  border: 1px solid #4b5563;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-field > input::placeholder,
+.form-field > textarea::placeholder {
+  color: #9ca3af;
+}
+
+.form-field > input:focus,
+.form-field > textarea:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+
+.form-field > textarea {
+  resize: none;
+  min-height: 6rem;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.submit-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px #111827;
+}
+
+.submit-btn:disabled {
+  background-color: #1e40af;
+  cursor: not-allowed;
+}

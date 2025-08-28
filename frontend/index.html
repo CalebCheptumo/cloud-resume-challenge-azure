@@ -725,9 +725,13 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" aria-labelledby="contact-title">
-      <div>
-        <div>
+    <section
+      id="contact"
+      class="contact-section"
+      aria-labelledby="contact-title"
+    >
+      <div class="contact-container">
+        <div class="contact-header">
           <h2 id="contact-title">Let's Connect</h2>
           <p>
             Ready to discuss cloud engineering opportunities? I'm actively
@@ -735,12 +739,12 @@
           </p>
         </div>
 
-        <div>
+        <div class="contact-form-wrapper">
           <!-- Contact Form -->
-          <div>
+          <div class="contact-form-container">
             <h3>Send a Message</h3>
-            <form>
-              <div>
+            <form class="contact-form">
+              <div class="form-field">
                 <label for="name">Name</label>
                 <input
                   type="text"
@@ -751,7 +755,7 @@
                 />
               </div>
 
-              <div>
+              <div class="form-field">
                 <label for="email">Email</label>
                 <input
                   type="email"
@@ -762,7 +766,7 @@
                 />
               </div>
 
-              <div>
+              <div class="form-field">
                 <label for="message">Message</label>
                 <textarea
                   id="message"
@@ -773,7 +777,7 @@
                 ></textarea>
               </div>
 
-              <button type="submit">Send Message</button>
+              <button type="submit" class="submit-btn">Send Message</button>
             </form>
           </div>
         </div>
