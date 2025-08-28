@@ -15,6 +15,24 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!-- EmailJS Configuration -->
+    <script src="js/config.js"></script>
+    <!-- EmailJS Library -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
+    <script type="text/javascript">
+      // Initialize EmailJS with public key from config
+      (function () {
+        if (window.EMAILJS_CONFIG && window.EMAILJS_CONFIG.PUBLIC_KEY) {
+          emailjs.init(window.EMAILJS_CONFIG.PUBLIC_KEY);
+          console.log("EmailJS initialized with public key from config");
+        } else {
+          console.error("EMAILJS_CONFIG.PUBLIC_KEY not found in config file");
+        }
+      })();
+    </script>
   </head>
   <body>
     <!-- Header -->

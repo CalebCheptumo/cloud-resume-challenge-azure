@@ -1,0 +1,38 @@
+name: Build EmailJS Configuration
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build with EmailJS configuration
+        env:
+          EMAILJS_SERVICE_ID: ${{ vars.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ vars.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PUBLIC_KEY: ${{ vars.EMAILJS_PUBLIC_KEY }}
+        run: |
+          # Create config.js with real values from GitHub variables
+          cat > js/config.js << EOF
+          window.EMAILJS_CONFIG = {
+            SERVICE_ID: "$EMAILJS_SERVICE_ID",
+            TEMPLATE_ID: "$EMAILJS_TEMPLATE_ID",
+            PUBLIC_KEY: "$EMAILJS_PUBLIC_KEY"
+          };
+          EOF
+
+          echo "EmailJS configuration built successfully"
+          echo "SERVICE_ID: $EMAILJS_SERVICE_ID"
+          echo "TEMPLATE_ID: $EMAILJS_TEMPLATE_ID"
+          echo "PUBLIC_KEY: $EMAILJS_PUBLIC_KEY"
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add js/config.js
+          git commit -m "Update EmailJS configuration with real values" || exit 0
+          git push
