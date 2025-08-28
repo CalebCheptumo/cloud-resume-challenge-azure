@@ -255,3 +255,164 @@ footer > div > div:last-child > p {
   font-weight: 400;
   line-height: 1.75rem;
 }
+
+/* Hero Section Styles */
+#hero {
+  position: relative;
+  padding-top: 9rem;
+  padding-bottom: 3rem;
+  background-color: #111827;
+}
+
+@media (min-width: 768px) {
+  #hero {
+    padding-top: 10rem;
+    padding-bottom: 5rem;
+  }
+}
+
+#hero > div {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  #hero > div {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Left: Copy */
+#hero > div > div:first-child {
+  order: 2;
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  #hero > div > div:first-child {
+    order: 1;
+  }
+}
+
+#hero h1 {
+  font-size: 2.25rem;
+  line-height: 2.25rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  #hero h1 {
+    font-size: 5rem;
+    line-height: 5rem;
+  }
+}
+
+#hero p {
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  line-height: 2.25rem;
+  font-weight: 400;
+  color: #d1d5db;
+  max-width: 65ch;
+}
+
+@media (min-width: 768px) {
+  #hero p {
+    line-height: 2rem;
+  }
+}
+
+#hero > div > div:first-child > div {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* CTA Button */
+#hero a[href*="drive.google.com"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1.125rem;
+  line-height: 1.6875rem;
+}
+
+#hero a[href*="drive.google.com"]:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Social Links */
+#hero div[aria-label="Social links"] {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#hero div[aria-label="Social links"] a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(55, 65, 81, 0.8);
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 0.625rem;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+#hero div[aria-label="Social links"] a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#hero div[aria-label="Social links"] a svg {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #ffffff;
+}
+
+/* Right: Image */
+#hero > div > div:last-child {
+  order: 1;
+  align-self: start;
+}
+
+@media (min-width: 768px) {
+  #hero > div > div:last-child {
+    order: 2;
+  }
+}
+
+#hero > div > div:last-child > div {
+  position: relative;
+  margin: 0 auto;
+  max-width: 24rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#hero > div > div:last-child > div > img {
+  height: auto;
+  width: 100%;
+  object-fit: cover;
+}
