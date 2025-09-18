@@ -1,10 +1,32 @@
 // Main JavaScript functionality for Cloud Resume Challenge
+// Config
+const API_BASE_URL = 'http://localhost:7071';
+
+async function loadVisitorCount() {
+  const el = document.getElementById('visitor-count');
+  if (!el) return;
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/VisitorsHttpsTrigger`, { method: 'GET' });
+    const data = await res.json();
+    el.textContent = (data && typeof data.count === 'number') ? data.count : '—';
+  } catch (err) {
+    console.error('Failed to load visitor count', err);
+    el.textContent = '—';
+  }
+}
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize smooth scrolling
   initSmoothScrolling();
 
+
   // Initialize contact form
   initContactForm();
+
+  // Load visitor count
+  loadVisitorCount();
 });
 
 /**
@@ -215,3 +237,6 @@ function showSuccessState() {
   // Insert success message
   formContainer.appendChild(successDiv);
 }
+
+
+
