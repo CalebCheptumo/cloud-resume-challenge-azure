@@ -1,6 +1,6 @@
 // Main JavaScript functionality for Cloud Resume Challenge
 // Config
-const API_BASE_URL = 'http://localhost:7071';
+const API_BASE_URL = 'https://fa-calebresume-dev-linux.azurewebsites.net';
 
 async function loadVisitorCount() {
   const el = document.getElementById('visitor-count');
