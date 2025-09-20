@@ -10,28 +10,41 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install deps
         working-directory: backend
         run: pip install -r requirements.txt
+
       - name: Run tests
         working-directory: backend
         run: python -m pytest -v
+
       - name: Azure login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Assign Contributor role to SP
+        run: |
+          az role assignment create \
+            --assignee "${{ secrets.AZURE_CLIENT_ID }}" \
+            --role Contributor \
+            --scope "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+
       - name: Deploy ARM
         run: >
           az deployment group create
           --resource-group rg-cloud-resume
           --template-file backend/infrastructure/azuredeploy.json
           --parameters backend/infrastructure/azuredeploy.parameters.json
+
       - name: Set app settings
         run: >
           az functionapp config appsettings set
@@ -42,6 +55,7 @@ jobs:
           COSMOS_TABLE_NAME='VisitorCounter'
           COSMOS_PARTITION_KEY='counter'
           COSMOS_ROW_KEY='global'
+
       - name: Publish Function
         uses: Azure/functions-action@v1
         with:
