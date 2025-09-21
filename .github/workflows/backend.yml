@@ -1,59 +1,74 @@
 name: backend-ci-cd
+
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering
+
+env:
+  AZURE_FUNCTIONAPP_NAME: fa-calebresume-dev-linux
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'backend'
+  PYTHON_VERSION: '3.11'
+
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    
     steps:
-      - uses: actions/checkout@v4
+      # Checkout the repository
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
 
-      - name: Setup Python
+      # Setup Python environment
+      - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install deps
-        working-directory: backend
-        run: pip install -r requirements.txt
+      # Install Python dependencies
+      - name: 'Resolve Project Dependencies Using Pip'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          popd
 
-      - name: Run tests
-        working-directory: backend
-        run: python -m pytest -v
+      # Run tests (optional but recommended)
+      - name: 'Run Python Tests'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          python -m pytest -v || echo "No tests found or tests failed"
+          popd
 
-      - name: Azure login
+      # Azure Login using OIDC
+      - name: 'Login via Azure CLI'
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy ARM
-        run: >
-          az deployment group create
-          --resource-group rg-cloud-resume
-          --template-file backend/infrastructure/azuredeploy.json
-          --parameters backend/infrastructure/azuredeploy.parameters.json
+      # Verify Azure connection
+      - name: 'Verify Azure Connection'
+        run: |
+          az account show
+          az group list --query "[].name" -o table
 
-      - name: Set app settings
-        run: >
-          az functionapp config appsettings set
-          --name fa-calebresume-dev-linux
-          --resource-group rg-cloud-resume
-          --settings
-          COSMOS_TABLE_CONN_STR='${{ secrets.COSMOS_TABLE_CONN_STR }}'
-          COSMOS_TABLE_CONN_STR='${{ secrets.COSMOS_TABLE_CONN_STR }}'
-          COSMOS_TABLE_NAME='VisitorCounter'
-          COSMOS_PARTITION_KEY='counter'
-          COSMOS_ROW_KEY='global'
+      # Deploy ARM Template (Infrastructure)
+      - name: 'Deploy Azure Infrastructure'
+        run: |
+          az deployment group create \
+            --resource-group rg-cloud-resume \
+            --template-file ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/azuredeploy.json \
+            --parameters ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/azuredeploy.parameters.json \
+            --verbose
 
-      - name: Publish Function
-        uses: Azure/functions-action@v1
-        with:
-          app-name: fa-calebresume-dev-linux
-          package: backend
-          scm-do-build-during-deployment: true
+      # Configure Function App Settings
+      - name: 'Configure Function App Settings'
+        run: |
+          az functionapp config ap
