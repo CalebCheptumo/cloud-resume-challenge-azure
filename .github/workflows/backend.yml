@@ -3,7 +3,7 @@ name: backend-ci-cd
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: fa-calebresume-dev-linux
@@ -16,59 +16,84 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    
+
     steps:
-      # Checkout the repository
-      - name: 'Checkout GitHub Action'
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Python environment
-      - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      # Install Python dependencies
-      - name: 'Resolve Project Dependencies Using Pip'
+      - name: Install dependencies
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
           python -m pip install --upgrade pip
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           popd
 
-      # Run tests (optional but recommended)
-      - name: 'Run Python Tests'
+      - name: Run tests
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}"
           python -m pytest -v || echo "No tests found or tests failed"
           popd
 
-      # Azure Login using OIDC
-      - name: 'Login via Azure CLI'
+      - name: Login via Azure CLI
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
 
-      # Verify Azure connection
-      - name: 'Verify Azure Connection'
+      - name: Select subscription
+        run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify Azure connection
         run: |
           az account show
           az group list --query "[].name" -o table
 
-      # Deploy ARM Template (Infrastructure)
-      - name: 'Deploy Azure Infrastructure'
+      - name: Deploy infrastructure
         run: |
           az deployment group create \
             --resource-group rg-cloud-resume \
             --template-file ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/azuredeploy.json \
-            --parameters ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/azuredeploy.parameters.json \
+            --parameters @${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/deploymentParameters.json \
             --verbose
 
-      # Configure Function App Settings
-      - name: 'Configure Function App Settings'
+      - name: Configure Function App settings
+        shell: bash
         run: |
-          az functionapp config ap
+          set -x
+          az functionapp config appsettings set \
+            --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+            --resource-group rg-cloud-resume \
+            --settings \
+              COSMOS_TABLE_CONN_STR="${{ secrets.COSMOS_TABLE_CONN_STR }}" \
+              COSMOS_TABLE_NAME="${{ secrets.COSMOS_TABLE_NAME }}" \
+              COSMOS_PARTITION_KEY="${{ secrets.COSMOS_PARTITION_KEY }}" \
+              COSMOS_ROW_KEY="${{ secrets.COSMOS_ROW_KEY }}" \
+              EMAILJS_PUBLIC_KEY="${{ secrets.EMAILJS_PUBLIC_KEY }}" \
+              EMAILJS_SERVICE_ID="${{ secrets.EMAILJS_SERVICE_ID }}" \
+              EMAILJS_TEMPLATE_ID="${{ secrets.EMAILJS_TEMPLATE_ID }}" \
+              FUNCTIONS_WORKER_RUNTIME=python \
+            --verbose
+
+      - name: Deploy Function App code
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          scm-do-build-during-deployment: true
+
+      - name: Post-deployment check
+        run: |
+          echo "Deployment complete"
+          az functionapp show \
+            --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+            --resource-group rg-cloud-resume \
+            --query state -o tsv
