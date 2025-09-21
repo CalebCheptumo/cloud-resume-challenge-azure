@@ -62,7 +62,7 @@ jobs:
           az deployment group create \
             --resource-group rg-cloud-resume \
             --template-file ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/azuredeploy.json \
-            --parameters @${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/deploymentParameters.json \
+            --parameters @${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/infrastructure/azuredeploy.parameters.json \
             --verbose
 
       - name: Configure Function App settings
