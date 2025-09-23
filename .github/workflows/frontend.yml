@@ -18,7 +18,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Storage Static Website (ARM)
+      # ARM: create/ensure Storage Account only
+      - name: Deploy Storage account (ARM)
         uses: azure/cli@v2
         with:
           azcliversion: latest
@@ -30,6 +31,20 @@ jobs:
               --mode Incremental \
               --template-file frontend/infrastructure/azuredeploy.json \
               --parameters @frontend/infrastructure/azuredeploy.parameters.json
+
+      # Enable Static Website via CLI (avoids ARM staticWebsite API quirks)
+      - name: Enable Static Website
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            STORAGE_ACCOUNT=$(jq -r '.parameters.storageAccountName.value' frontend/infrastructure/azuredeploy.parameters.json)
+            KEY=$(az storage account keys list --resource-group rg-cloud-resume --account-name "$STORAGE_ACCOUNT" --query '[0].value' -o tsv)
+            az storage blob service-properties update \
+              --account-name "$STORAGE_ACCOUNT" \
+              --account-key "$KEY" \
+              --static-website \
+              --index-document index.html
 
       - name: Upload site to $web
         uses: azure/cli@v2
