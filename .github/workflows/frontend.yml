@@ -2,11 +2,14 @@ name: frontend-ci-cd
 on:
   push:
     branches: [ main ]
-    paths: [ 'frontend/**', '.github/workflows/frontend.yml' ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -15,20 +18,31 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Storage Static Website
-        run: |
-          az deployment group create \
-            --resource-group rg-cloud-resume \
-            --template-file frontend/infrastructure/azuredeploy.json \
-            --parameters frontend/infrastructure/azuredeploy.parameters.json
+      - name: Deploy Storage Static Website (ARM)
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            export AZURE_CORE_OUTPUT=none
+            az deployment group create \
+              --resource-group rg-cloud-resume \
+              --name frontend-static-${{ github.run_id }} \
+              --mode Incremental \
+              --template-file frontend/infrastructure/azuredeploy.json \
+              --parameters @frontend/infrastructure/azuredeploy.parameters.json
 
       - name: Upload site to $web
-        run: |
-          STORAGE_ACCOUNT=$(jq -r '.parameters.storageAccountName.value' frontend/infrastructure/azuredeploy.parameters.json)
-          KEY=$(az storage account keys list --resource-group rg-cloud-resume --account-name $STORAGE_ACCOUNT --query '[0].value' -o tsv)
-          az storage blob upload-batch \
-            --account-name $STORAGE_ACCOUNT \
-            --account-key $KEY \
-            --source frontend \
-            --destination '$web' \
-            --overwrite
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            STORAGE_ACCOUNT=$(jq -r '.parameters.storageAccountName.value' frontend/infrastructure/azuredeploy.parameters.json)
+            KEY=$(az storage account keys list --resource-group rg-cloud-resume --account-name "$STORAGE_ACCOUNT" --query '[0].value' -o tsv)
+            az storage blob upload-batch \
+              --account-name "$STORAGE_ACCOUNT" \
+              --account-key "$KEY" \
+              --source frontend \
+              --destination '$web' \
+              --overwrite
+
+     
