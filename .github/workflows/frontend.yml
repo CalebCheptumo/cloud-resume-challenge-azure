@@ -1,63 +1,83 @@
 name: frontend-ci-cd
+
 on:
   push:
     branches: [ main ]
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend.yml'
+  workflow_dispatch:
+
+env:
+  AZURE_RG: rg-cloud-resume
+  STORAGE_ACCOUNT_NAME: calebresumedevweb001   # change to a globally-unique, lowercase name
+  LOCATION: eastus
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Azure login
+      - name: Login via Azure CLI
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
 
-      # ARM: create/ensure Storage Account only
-      - name: Deploy Storage account (ARM)
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            export AZURE_CORE_OUTPUT=none
-            az deployment group create \
-              --resource-group rg-cloud-resume \
-              --name frontend-static-${{ github.run_id }} \
-              --mode Incremental \
-              --template-file frontend/infrastructure/azuredeploy.json \
-              --parameters @frontend/infrastructure/azuredeploy.parameters.json
+      - name: Select subscription
+        run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Enable Static Website via CLI (avoids ARM staticWebsite API quirks)
+      - name: Ensure Storage Account exists (StorageV2, Standard_LRS)
+        shell: bash
+        run: |
+          set -e
+          if ! az storage account show --name "${{ env.STORAGE_ACCOUNT_NAME }}" --resource-group "${{ env.AZURE_RG }}" >/dev/null 2>&1; then
+            az storage account create \
+              --name "${{ env.STORAGE_ACCOUNT_NAME }}" \
+              --resource-group "${{ env.AZURE_RG }}" \
+              --location "${{ env.LOCATION }}" \
+              --sku Standard_LRS \
+              --kind StorageV2 \
+              --min-tls-version TLS1_2 \
+              --allow-blob-public-access true \
+              --verbose
+          fi
+
       - name: Enable Static Website
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            STORAGE_ACCOUNT=$(jq -r '.parameters.storageAccountName.value' frontend/infrastructure/azuredeploy.parameters.json)
-            KEY=$(az storage account keys list --resource-group rg-cloud-resume --account-name "$STORAGE_ACCOUNT" --query '[0].value' -o tsv)
-            az storage blob service-properties update \
-              --account-name "$STORAGE_ACCOUNT" \
-              --account-key "$KEY" \
-              --static-website \
-              --index-document index.html
+        shell: bash
+        run: |
+          KEY=$(az storage account keys list \
+            --resource-group "${{ env.AZURE_RG }}" \
+            --account-name "${{ env.STORAGE_ACCOUNT_NAME }}" \
+            --query '[0].value' -o tsv)
+          az storage blob service-properties update \
+            --account-name "${{ env.STORAGE_ACCOUNT_NAME }}" \
+            --account-key "$KEY" \
+            --static-website \
+            --index-document index.html \
+            --verbose
 
-      - name: Upload site to $web
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            STORAGE_ACCOUNT=$(jq -r '.parameters.storageAccountName.value' frontend/infrastructure/azuredeploy.parameters.json)
-            KEY=$(az storage account keys list --resource-group rg-cloud-resume --account-name "$STORAGE_ACCOUNT" --query '[0].value' -o tsv)
-            az storage blob upload-batch \
-              --account-name "$STORAGE_ACCOUNT" \
-              --account-key "$KEY" \
-              --source frontend \
-              --destination '$web' \
-              --overwrite
+      - name: Upload frontend to $web
+        shell: bash
+        run: |
+          KEY=$(az storage account keys list \
+            --resource-group "${{ env.AZURE_RG }}" \
+            --account-name "${{ env.STORAGE_ACCOUNT_NAME }}" \
+            --query '[0].value' -o tsv)
+          az storage blob upload-batch \
+            --account-name "${{ env.STORAGE_ACCOUNT_NAME }}" \
+            --account-key "$KEY" \
+            --source frontend \
+            --destination '$web' \
+            --overwrite \
+            --verbose
 
      
